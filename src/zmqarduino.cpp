@@ -25,8 +25,8 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-	int pushPort;
-	int pullPort;
+  int pushPort;
+  int pullPort;
 
   po::options_description desc("Allowed options");
   desc.add_options()
@@ -35,22 +35,22 @@ int main(int argc, char *argv[]) {
     ("help", "produce help message")
     ;
   po::positional_options_description p;
-  
+
   po::variables_map vm;
   po::store(po::command_line_parser(argc, argv).
           options(desc).positional(p).run(), vm);
   po::notify(vm);   
-    
-	zmq::context_t context (1);
-	zmq::socket_t pull(context, ZMQ_PULL);
-	pull.bind("tcp://127.0.0.1:" + to_string(pullPort));
-	cout << "Connect to ZMQ as PULL on " << pullPort << endl;
-	
-	zmq::socket_t push(context, ZMQ_PUSH);
-	push.bind("tcp://127.0.0.1:" + to_string(pushPort));
-	cout << "Connect to ZMQ as PUSH on " << pushPort << endl;
+
+  zmq::context_t context (1);
+  zmq::socket_t pull(context, ZMQ_PULL);
+  pull.bind("tcp://127.0.0.1:" + to_string(pullPort));
+  cout << "Connect to ZMQ as PULL on " << pullPort << endl;
+
+  zmq::socket_t push(context, ZMQ_PUSH);
+  push.bind("tcp://127.0.0.1:" + to_string(pushPort));
+  cout << "Connect to ZMQ as PUSH on " << pushPort << endl;
   
   Server server(&pull, &push);
   server.run();
-  
+
 }

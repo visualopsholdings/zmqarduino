@@ -238,12 +238,12 @@ void Server::run() {
 
 //    cout << "." << endl;
       
-		zmq::message_t reply;
-		if (_pull->recv(&reply, ZMQ_DONTWAIT)) {
-		  string s((const char *)reply.data(), reply.size());
-		  json doc = json::parse(s);
-		  {
-		    // a client has connected.
+    zmq::message_t reply;
+    if (_pull->recv(&reply, ZMQ_DONTWAIT)) {
+      string s((const char *)reply.data(), reply.size());
+      json doc = json::parse(s);
+      {
+        // a client has connected.
         boost::optional<json::iterator> connected = get(&doc, "connected");
         if (connected) {
           string name = **connected;
@@ -255,9 +255,9 @@ void Server::run() {
           }
           continue;
         }
-		  }
-		  {
-		    // a client want's to send data.
+      }
+      {
+        // a client want's to send data.
         boost::optional<json::iterator> j = get(&doc, "send");
         if (j) {
           boost::optional<string> name = getstring(*j, "name");
@@ -269,21 +269,21 @@ void Server::run() {
           sendserial(*name, *data);
           continue;
         }
-		  }
-		}
+      }
+    }
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(SLEEP_TIME));
-    
+
     doread();
-	  
-	  // every so often, check the device tree.
-	  ptime cur = second_clock::local_time();
+
+    // every so often, check the device tree.
+    ptime cur = second_clock::local_time();
     time_duration diff = cur - start;
     if (diff.total_seconds() > DEVICE_CHECK_CADENCE) {
       handladdremove();
       start = cur;
     }
     
-	}
-	
+  }
+
 }
