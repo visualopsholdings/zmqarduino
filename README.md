@@ -1,18 +1,18 @@
-# zmqarduino
+# ZMQArduino
 
 A C++ service for using ZMQ to deal with arduinos.
 
 This exposes an Arduino to a service that only has to PUSH and PULL using ZeroMQ.
 
-Current functionality implemented:
+## Current functionality implemented:
 
-## Detecting an arduino added to the /dev tree.
+### Detecting an arduino added to the /dev tree.
 
 Extremely rudimentary, only works for Mac OS X and doesn't really probe the Arduino at all.
 
 There can only be 1 arduino and for now it's called "arduino".
 
-## sending data to an Arduino
+### sending data to an Arduino
 
 Correctly implements a serial connection to an Arduino on Mac OS X.
 
