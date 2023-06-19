@@ -12,7 +12,7 @@ Extremely rudimentary, only works for Mac OS X and doesn't really probe the Ardu
 
 There can only be 1 arduino and for now it's called "arduino".
 
-### sending data to an Arduino
+### Sending data to an Arduino
 
 Correctly implements a serial connection to an Arduino on Mac OS X.
 
