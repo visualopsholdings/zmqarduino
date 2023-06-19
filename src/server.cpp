@@ -20,6 +20,15 @@
 #include "boost/filesystem/path.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+// how often we check the device tree in seconds.
+#define DEVICE_CHECK_CADENCE  2
+
+// this is hard coded, we need to work out how we might probe for this.
+#define BAUD_RATE             9600
+
+// so we don't hammer the CPU, we sleep a little while each loop.
+#define SLEEP_TIME            20
+
 using namespace std;
 using json = nlohmann::json;
 namespace fs = boost::filesystem;
@@ -66,8 +75,11 @@ void Server::connectserial(const string &path, int baud) {
     return;
   }
   
+  // this is a terrible hack but for some reason the first send doesn't TAKE
+  // so we need to wait a bit and send it again.
+  // works just fine after that.
   this_thread::sleep_for(chrono::milliseconds(500));
-  _serial->writeString("OFF\n");
+  _serial->writeString("ID\n");
   this_thread::sleep_for(chrono::milliseconds(100));
   _waitingid = true;
   _serial->writeString("ID\n");
@@ -153,9 +165,31 @@ void Server::opendevs(const vector<string> &devs) {
     std::cout << "can only handle 1 new device" << endl;
   }
   else if (devs.size() > 0) {
-    connectserial(devs[0], 9600);
+    connectserial(devs[0], BAUD_RATE);
   }
 
+}
+
+void Server::doread() {
+
+  if (_serial) {
+    stringstream s;
+    s << _serial->readStringUntil("\n");
+    if (s.str().length() > 0) {
+      if (_waitingid) {
+        _waitingid = false;
+        _id = s.str();
+        json msg;
+        msg["added"] = *_id;
+        sendjson(msg);
+      }
+      else {
+        cout << s.str();
+        cout.flush();
+      }
+    }
+  }
+  
 }
 
 void Server::handladdremove() {
@@ -209,6 +243,7 @@ void Server::run() {
 		  string s((const char *)reply.data(), reply.size());
 		  json doc = json::parse(s);
 		  {
+		    // a client has connected.
         boost::optional<json::iterator> connected = get(&doc, "connected");
         if (connected) {
           string name = **connected;
@@ -222,6 +257,7 @@ void Server::run() {
         }
 		  }
 		  {
+		    // a client want's to send data.
         boost::optional<json::iterator> j = get(&doc, "send");
         if (j) {
           boost::optional<string> name = getstring(*j, "name");
@@ -236,29 +272,14 @@ void Server::run() {
 		  }
 		}
 
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(40));
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(SLEEP_TIME));
     
-    if (_serial) {
-      stringstream s;
-      s << _serial->readStringUntil("\n");
-      if (s.str().length() > 0) {
-        if (_waitingid) {
-          _waitingid = false;
-          _id = s.str();
-          json msg;
-          msg["added"] = *_id;
-          sendjson(msg);
-        }
-        else {
-          cout << s.str();
-          cout.flush();
-        }
-      }
-    }
+    doread();
 	  
+	  // every so often, check the device tree.
 	  ptime cur = second_clock::local_time();
     time_duration diff = cur - start;
-    if (diff.total_seconds() > 2) {
+    if (diff.total_seconds() > DEVICE_CHECK_CADENCE) {
       handladdremove();
       start = cur;
     }

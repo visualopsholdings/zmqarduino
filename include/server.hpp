@@ -50,6 +50,7 @@ private:
   void getdevs(std::vector<std::string> *devs);
   void opendevs(const std::vector<std::string> &devs);
   void handladdremove();
+  void doread();
   
 };
 

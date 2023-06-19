@@ -6,7 +6,7 @@ This exposes an Arduino to a service that only has to PUSH and PULL using ZeroMQ
 idea is to use this service running on a raspberry PI (or any *nix*, even the Mac) and then use
 it to send or receive any data from an arduino.
 
-The reason why message queing ZMQ is used is so that services can easily asynchronously receive
+ZMQ is used is so that services can easily asynchronously receive
 data coming from an Arduino which is difficult to code in Python, or JavaScript etc.
 
 This service would be running as a daemon on a computer and then another process could connect
