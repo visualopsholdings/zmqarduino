@@ -33,7 +33,7 @@ pullSocket.on('message', (msg) => {
   }
   else if (json.added) {
     console.log("added", json.added);
-    pushSocket.send(JSON.stringify({ send: { name: "arduino", data: "FLASH" } }));
+    pushSocket.send(JSON.stringify({ send: { name: json.added, data: "FLASH" } }));
   }
   else if (json.removed) {
     console.log("removed", json.removed);
@@ -42,3 +42,4 @@ pullSocket.on('message', (msg) => {
     console.log("error", json.error);
   }
 });
+pushSocket.send(JSON.stringify({ connected: "me" }));

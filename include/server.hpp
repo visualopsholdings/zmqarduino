@@ -26,7 +26,7 @@ class BufferedAsyncSerial;
 class Server {
 
 public:
-  Server(zmq::socket_t *pull, zmq::socket_t *push) : _pull(pull), _push(push), _serial(0) {}
+  Server(zmq::socket_t *pull, zmq::socket_t *push) : _pull(pull), _push(push), _serial(0), _waitingid(false) {}
   ~Server();
   
   void run();
@@ -36,8 +36,11 @@ private:
   zmq::socket_t *_push;
   BufferedAsyncSerial *_serial;
   std::vector<std::string> _curdevs;
+  bool _waitingid;
+  boost::optional<std::string> _id;
   
-  void connectserial(const std::string &name, const std::string &path, int baud);
+  void close();
+  void connectserial(const std::string &path, int baud);
   void sendserial(const std::string &name, const std::string &data);
   void sendjson(const nlohmann::json &m);
   

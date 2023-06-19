@@ -26,28 +26,31 @@ namespace fs = boost::filesystem;
 using namespace boost::posix_time;
 
 Server::~Server() {
-  if (_serial) {
-    _serial->close();
-    delete _serial;
-  }
+  close();
 }
 
-void Server::sendjson(const json &m) {
-  string msg = m.dump();
-  zmq::message_t zmsg(msg.length());
-  memcpy(zmsg.data(), msg.c_str(), msg.length());
-  _push->send(zmsg);
-}
-
-void Server::connectserial(const string &name, const string &path, int baud) {
-
-  cout << "connecting to " << path << endl;
-
+void Server::close() {
   if (_serial) {
     _serial->close();
     delete _serial;
     _serial = 0;
   }
+}
+
+void Server::sendjson(const json &m) {
+
+  string msg = m.dump();
+  zmq::message_t zmsg(msg.length());
+  memcpy(zmsg.data(), msg.c_str(), msg.length());
+  _push->send(zmsg, ZMQ_DONTWAIT);
+
+}
+
+void Server::connectserial(const string &path, int baud) {
+
+  cout << "connecting to " << path << endl;
+
+  close();
   
   try {
     _serial = new BufferedAsyncSerial(path, baud);
@@ -66,6 +69,8 @@ void Server::connectserial(const string &name, const string &path, int baud) {
   this_thread::sleep_for(chrono::milliseconds(500));
   _serial->writeString("OFF\n");
   this_thread::sleep_for(chrono::milliseconds(100));
+  _waitingid = true;
+  _serial->writeString("ID\n");
   
 }
 
@@ -73,6 +78,15 @@ void Server::sendserial(const string &name, const string &data) {
 
   cout << "sending to " << name << endl;
 
+  if (_id) {
+    if (*_id != name) {
+      cout << "cant send to " << name << endl;
+      json msg;
+      msg["error"] = "don't know " + name;
+      sendjson(msg);
+      return;
+    }
+  }
   if (!_serial || !_serial->isOpen() || _serial->errorStatus()) {
     cout << "error while sending" << endl;
     json msg;
@@ -139,12 +153,9 @@ void Server::opendevs(const vector<string> &devs) {
     std::cout << "can only handle 1 new device" << endl;
   }
   else if (devs.size() > 0) {
-    connectserial("arduino", devs[0], 9600);        
-    json msg;
-    msg["added"] = "arduino";
-    sendjson(msg);
+    connectserial(devs[0], 9600);
   }
-  
+
 }
 
 void Server::handladdremove() {
@@ -165,9 +176,12 @@ void Server::handladdremove() {
     std::cout << "can only handle 1 new device" << endl;
   }
   else if (removed.size() > 0) {
-    json msg;
-    msg["removed"] = "arduino";
-    sendjson(msg);
+    if (_id) {
+      json msg;
+      msg["removed"] = *_id;
+      sendjson(msg);
+      _id = boost::none;
+    }
     if (_serial) {
       // no point closing, it's gone :-(
       delete _serial;
@@ -188,14 +202,27 @@ void Server::run() {
 
   while (1) {
 
-//    cout << "loop" << endl;
-    
+//    cout << "." << endl;
+      
 		zmq::message_t reply;
 		if (_pull->recv(&reply, ZMQ_DONTWAIT)) {
 		  string s((const char *)reply.data(), reply.size());
-		  json json = json::parse(s);
+		  json doc = json::parse(s);
 		  {
-        boost::optional<json::iterator> j = get(&json, "send");
+        boost::optional<json::iterator> connected = get(&doc, "connected");
+        if (connected) {
+          string name = **connected;
+          cout << name << " connected" << endl;
+          if (_id) {
+            json msg;
+            msg["added"] = *_id;
+            sendjson(msg);
+          }
+          continue;
+        }
+		  }
+		  {
+        boost::optional<json::iterator> j = get(&doc, "send");
         if (j) {
           boost::optional<string> name = getstring(*j, "name");
           boost::optional<string> data = getstring(*j, "data");
@@ -212,7 +239,21 @@ void Server::run() {
     boost::this_thread::sleep_for(boost::chrono::milliseconds(40));
     
     if (_serial) {
-      cout << _serial->readStringUntil("\n");
+      stringstream s;
+      s << _serial->readStringUntil("\n");
+      if (s.str().length() > 0) {
+        if (_waitingid) {
+          _waitingid = false;
+          _id = s.str();
+          json msg;
+          msg["added"] = *_id;
+          sendjson(msg);
+        }
+        else {
+          cout << s.str();
+          cout.flush();
+        }
+      }
     }
 	  
 	  ptime cur = second_clock::local_time();

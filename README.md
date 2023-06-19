@@ -10,7 +10,7 @@ This exposes an Arduino to a service that only has to PUSH and PULL using ZeroMQ
 
 Extremely rudimentary, only works for Mac OS X and doesn't really probe the Arduino at all.
 
-There can only be 1 arduino and for now it's called "arduino".
+The arduino needs to respond to the command "ID\n" over serial with a name which identifies it.
 
 ### Sending data to an Arduino
 
@@ -30,6 +30,16 @@ commands and receive things from the service.
 ## API
 
 ### sent
+
+#### Tell the service you are connected
+
+```
+{ 
+  connected: "me"
+}
+```
+
+The service will send back any "added" arduinos.
 
 #### Send data to an arduino
 
@@ -131,4 +141,9 @@ https://zeromq.org/
 
 https://www.boost.org/
 https://isocpp.org/
+
+## Change Log
+
+### 19 Jun 2023
+- Initial checkin, and then added the concept of the "ID" of the arduino.
 
