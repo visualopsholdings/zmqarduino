@@ -1,0 +1,11 @@
+{
+  "name": "zmqardiono",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Test apps for ZMQ and Arduino comms",
+  "dependencies": {
+    "zeromq": "^5.2.8"
+  },
+  "author": "Paul Hamilton <phamtec@mac.com> (http://www.visualops.com/)",
+  "license": "Closed"
+}
