@@ -2,7 +2,24 @@
 
 A C++ service for using ZMQ to deal with arduinos.
 
-This exposes an Arduino to a service that only has to PUSH and PULL using ZeroMQ.
+This exposes an Arduino to a service that only has to PUSH and PULL using ZeroMQ. The eventual
+idea is to use this service running on a raspberry PI (or any *nix*, even the Mac) and then use
+it to send or receive any data from an arduino.
+
+The reason why message queing ZMQ is used is so that services can easily asynchronously receive
+data coming from an Arduino which is difficult to code in Python, or JavaScript etc.
+
+This service would be running as a daemon on a computer and then another process could connect
+to it (even remotely) and find out the arduinos that are connected by name (in the sketch).
+
+When an arduino is connected or disconnected it will get a message, so it can deal with that.
+
+Eventually even programing the arduino will be supported because the idea is to use this to
+run tools like AVR dude and any other tools that are supported in the Arduino IDE. The IDE
+is written in TypeScript so there will be some work to reverse engineer it but it will be 
+way better if it just needs a small service like this and binary tools.
+
+That's the end goal. It's only VERY early days.
 
 ## Current functionality implemented:
 
