@@ -54,7 +54,7 @@ public:
 
     boost::asio::io_service io; ///< Io service object
     boost::asio::serial_port port; ///< Serial port object
-    std::thread backgroundThread; ///< Thread that runs read/write operations
+    boost::thread backgroundThread; ///< Thread that runs read/write operations
     bool open; ///< True if port open
     bool error; ///< Error flag
     mutable std::mutex errorMutex; ///< Mutex for access to error
@@ -104,7 +104,7 @@ void AsyncSerial::open(const std::string& devname, unsigned int baud_rate,
     //This gives some work to the io_service before it is started
     pimpl->io.post(boost::bind(&AsyncSerial::doRead, this));
 
-    thread t(boost::bind(&asio::io_service::run, &pimpl->io));
+    boost::thread t(boost::bind(&asio::io_service::run, &pimpl->io));
     pimpl->backgroundThread.swap(t);
     setErrorStatus(false);//If we get here, no error
     pimpl->open=true; //Port is now open

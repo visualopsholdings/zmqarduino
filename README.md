@@ -113,7 +113,38 @@ libraries and a C++ compiler.
 So on your Linux (or mac using Homebrew etc), get all you need:
 
 ```
-$ sudo apt-get -y install g++ gcc make cmake boost zmq
+$ sudo apt-get -y install g++ gcc make cmake libboost-all-dev
+```
+
+The build the prequesites we need:
+
+```
+git clone https://github.com/zeromq/libzmq.git
+cd libzmq
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd ../..
+
+git clone https://github.com/zeromq/cppzmq
+cd cppzmq
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd ../..
+
+git clone https://github.com/nlohmann/json
+cd json
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd ../..
 ```
 
 And then inside the "zmqarduino" folder on your machine, run:
@@ -131,7 +162,7 @@ Then to run the command:
 $ ./ZMQArduino
 ```
 
-For an M1 or M2 mac, use this command for cmake
+For an M1 or M2 mac, use this command for cmake for everything.
 
 ```
 $ cmake -DCMAKE_OSX_ARCHITECTURES="arm64" ..
@@ -164,3 +195,29 @@ https://isocpp.org/
 ### 19 Jun 2023
 - Initial checkin, and then added the concept of the "ID" of the arduino.
 
+git clone https://github.com/zeromq/libzmq.git
+cd libzmq
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd ../..
+
+git clone https://github.com/zeromq/cppzmq
+cd cppzmq
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd ../..
+
+git clone https://github.com/nlohmann/json
+cd json
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd ../..
