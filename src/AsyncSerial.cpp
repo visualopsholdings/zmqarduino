@@ -57,13 +57,13 @@ public:
     boost::thread backgroundThread; ///< Thread that runs read/write operations
     bool open; ///< True if port open
     bool error; ///< Error flag
-    mutable std::mutex errorMutex; ///< Mutex for access to error
+    mutable boost::mutex errorMutex; ///< Mutex for access to error
 
     /// Data are queued here before they go in writeBuffer
     std::vector<char> writeQueue;
     boost::shared_array<char> writeBuffer; ///< Data being written
     size_t writeBufferSize; ///< Size of writeBuffer
-    std::mutex writeQueueMutex; ///< Mutex for access to writeQueue
+    boost::mutex writeQueueMutex; ///< Mutex for access to writeQueue
     char readBuffer[AsyncSerial::readBufferSize]; ///< data being read
 
     /// Read complete callback
