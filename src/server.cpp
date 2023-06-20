@@ -152,10 +152,10 @@ void Server::getdevs(vector<string> *devs) {
   fs::directory_iterator end_iter;
   for (fs::directory_iterator i("/dev"); i != end_iter; i++) {
     string f = i->path().string();
-  #ifdef ARDUINO
-    if (f.find("/dev/ttyUSB") != string::npos) {
-  #else
+  #ifdef __APPLE__
     if (f.find("/dev/cu.usb") != string::npos) {
+  #else
+    if (f.find("/dev/ttyUSB") != string::npos) {
   #endif
       devs->push_back(f);
     }
