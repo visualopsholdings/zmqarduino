@@ -13,7 +13,6 @@
 #include <algorithm>
 
 using namespace std;
-using namespace std::placeholders;
 using namespace boost;
 
 //
@@ -22,7 +21,7 @@ using namespace boost;
 
 BufferedAsyncSerial::BufferedAsyncSerial(): AsyncSerial()
 {
-    setReadCallback(std::bind(&BufferedAsyncSerial::readCallback, this, _1, _2));
+    setReadCallback(std::bind(&BufferedAsyncSerial::readCallback, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 BufferedAsyncSerial::BufferedAsyncSerial(const std::string& devname,
@@ -33,7 +32,7 @@ BufferedAsyncSerial::BufferedAsyncSerial(const std::string& devname,
         asio::serial_port_base::stop_bits opt_stop)
         :AsyncSerial(devname,baud_rate,opt_parity,opt_csize,opt_flow,opt_stop)
 {
-    setReadCallback(std::bind(&BufferedAsyncSerial::readCallback, this, _1, _2));
+    setReadCallback(std::bind(&BufferedAsyncSerial::readCallback, this, std::placeholders::_1,std::placeholders:: _2));
 }
 
 size_t BufferedAsyncSerial::read(char *data, size_t size)
