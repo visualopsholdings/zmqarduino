@@ -117,7 +117,7 @@ bool AsyncSerial::isOpen() const
 
 bool AsyncSerial::errorStatus() const
 {
-    lock_guard<mutex> l(pimpl->errorMutex);
+    boost::lock_guard<boost::mutex> l(pimpl->errorMutex);
     return pimpl->error;
 }
 
@@ -139,7 +139,7 @@ void AsyncSerial::close()
 void AsyncSerial::write(const char *data, size_t size)
 {
     {
-        lock_guard<mutex> l(pimpl->writeQueueMutex);
+        boost::lock_guard<boost::mutex> l(pimpl->writeQueueMutex);
         pimpl->writeQueue.insert(pimpl->writeQueue.end(),data,data+size);
     }
     pimpl->io.post(boost::bind(&AsyncSerial::doWrite, this));
@@ -148,7 +148,7 @@ void AsyncSerial::write(const char *data, size_t size)
 void AsyncSerial::write(const std::vector<char>& data)
 {
     {
-        lock_guard<mutex> l(pimpl->writeQueueMutex);
+        boost::lock_guard<boost::mutex> l(pimpl->writeQueueMutex);
         pimpl->writeQueue.insert(pimpl->writeQueue.end(),data.begin(),
                 data.end());
     }
@@ -158,7 +158,7 @@ void AsyncSerial::write(const std::vector<char>& data)
 void AsyncSerial::writeString(const std::string& s)
 {
     {
-        lock_guard<mutex> l(pimpl->writeQueueMutex);
+        boost::lock_guard<boost::mutex> l(pimpl->writeQueueMutex);
         pimpl->writeQueue.insert(pimpl->writeQueue.end(),s.begin(),s.end());
     }
     pimpl->io.post(boost::bind(&AsyncSerial::doWrite, this));
@@ -219,7 +219,7 @@ void AsyncSerial::doWrite()
     //If a write operation is already in progress, do nothing
     if(pimpl->writeBuffer==0)
     {
-        lock_guard<mutex> l(pimpl->writeQueueMutex);
+        boost::lock_guard<boost::mutex> l(pimpl->writeQueueMutex);
         pimpl->writeBufferSize=pimpl->writeQueue.size();
         pimpl->writeBuffer.reset(new char[pimpl->writeQueue.size()]);
         copy(pimpl->writeQueue.begin(),pimpl->writeQueue.end(),
@@ -235,7 +235,7 @@ void AsyncSerial::writeEnd(const boost::system::error_code& error)
 {
     if(!error)
     {
-        lock_guard<mutex> l(pimpl->writeQueueMutex);
+        boost::lock_guard<boost::mutex> l(pimpl->writeQueueMutex);
         if(pimpl->writeQueue.empty())
         {
             pimpl->writeBuffer.reset();
@@ -268,7 +268,7 @@ void AsyncSerial::doClose()
 
 void AsyncSerial::setErrorStatus(bool e)
 {
-    lock_guard<mutex> l(pimpl->errorMutex);
+    boost::lock_guard<boost::mutex> l(pimpl->errorMutex);
     pimpl->error=e;
 }
 
