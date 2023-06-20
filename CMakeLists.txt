@@ -20,7 +20,7 @@ project (zmqarduino)
   enable_testing()
 
   set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_BUILD_TYPE Debug)
+#  set(CMAKE_BUILD_TYPE Debug)
 
 if (UNIX AND NOT APPLE)
   set(LIBS zmq)
