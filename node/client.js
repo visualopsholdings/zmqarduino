@@ -31,6 +31,9 @@ pullSocket.on('message', (msg) => {
   if (json.sent) {
     console.log("sent");
   }
+  if (json.received) {
+    console.log("recieved", json.received);
+  }
   else if (json.added) {
     console.log("added", json.added);
     pushSocket.send(JSON.stringify({ send: { name: json.added, data: "FLASH" } }));

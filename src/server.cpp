@@ -188,6 +188,9 @@ void Server::doread() {
         sendjson(msg);
       }
       else {
+        json msg;
+        msg["received"] = s.str();
+        sendjson(msg);
         cout << s.str();
         cout.flush();
       }

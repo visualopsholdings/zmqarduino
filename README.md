@@ -105,6 +105,14 @@ A "foo" error happened.
   
 Data was sent to the Arduino "arduino" 
 
+#### Data received
+
+```
+{ received: "Hi there" }
+```
+  
+Data was received from the Arduino "arduino".
+
 ## Development
 
 The development process for all of this code used a normal Linux environment with the BOOST
@@ -194,3 +202,6 @@ https://isocpp.org/
 
 ### 19 Jun 2023
 - Initial checkin, and then added the concept of the "ID" of the arduino.
+
+### 21 Jun 2023
+- Added "received".
