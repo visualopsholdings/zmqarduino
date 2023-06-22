@@ -108,7 +108,12 @@ Data was sent to the Arduino "arduino"
 #### Data received
 
 ```
-{ received: "Hi there" }
+{ 
+  received: { 
+    name: "arduino", 
+    data: "FLASH" 
+  } 
+}
 ```
   
 Data was received from the Arduino "arduino".

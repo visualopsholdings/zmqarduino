@@ -32,11 +32,11 @@ pullSocket.on('message', (msg) => {
     console.log("sent");
   }
   if (json.received) {
-    console.log("recieved", json.received);
+    console.log("received", json.received);
   }
   else if (json.added) {
     console.log("added", json.added);
-    pushSocket.send(JSON.stringify({ send: { name: json.added, data: "FLASH" } }));
+    pushSocket.send(JSON.stringify({ send: { name: json.added, data: "RUN" } }));
   }
   else if (json.removed) {
     console.log("removed", json.removed);

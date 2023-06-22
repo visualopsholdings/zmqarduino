@@ -78,6 +78,12 @@ void BufferedAsyncSerial::readCallback(const char *data, size_t len)
     readQueue.insert(readQueue.end(),data,data+len);
 }
 
+void BufferedAsyncSerial::clear()
+{
+    boost::lock_guard<boost::mutex> l(readQueueMutex);
+    readQueue.clear();
+}
+
 std::vector<char>::iterator BufferedAsyncSerial::findStringInVector(
         std::vector<char>& v,const std::string& s)
 {

@@ -79,6 +79,11 @@ public:
 
     virtual ~BufferedAsyncSerial();
 
+    /**
+    * Clear the Buffer
+    */
+    void clear();
+    
 private:
 
     /**

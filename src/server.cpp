@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <boost/algorithm/string.hpp>
 #include "boost/filesystem/operations.hpp"
 #include "boost/filesystem/path.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -81,8 +82,10 @@ void Server::connectserial(const string &path, int baud) {
   this_thread::sleep_for(chrono::milliseconds(500));
   _serial->writeString("ID\n");
   this_thread::sleep_for(chrono::milliseconds(100));
-  _waitingid = true;
+  _serial->clear();
+  this_thread::sleep_for(chrono::milliseconds(100));
   _serial->writeString("ID\n");
+  _waitingid = true;
   
 }
 
@@ -179,17 +182,24 @@ void Server::doread() {
   if (_serial) {
     stringstream s;
     s << _serial->readStringUntil("\n");
-    if (s.str().length() > 0) {
+    string st = s.str();
+    if (st.length() > 0) {
+      cout << "got " << st << endl;
       if (_waitingid) {
         _waitingid = false;
-        _id = s.str();
+        boost::trim(st);
+        _id = st;
         json msg;
         msg["added"] = *_id;
         sendjson(msg);
       }
-      else {
+      else if (_id) {
         json msg;
-        msg["received"] = s.str();
+        json data;
+        data["name"] = *_id;
+        boost::trim(st);
+        data["data"] = st;
+        msg["received"] = data;
         sendjson(msg);
         cout << s.str();
         cout.flush();
@@ -259,6 +269,8 @@ void Server::run() {
             json msg;
             msg["added"] = *_id;
             sendjson(msg);
+          }
+          else {
           }
           continue;
         }
