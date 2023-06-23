@@ -158,7 +158,7 @@ void Server::getdevs(vector<string> *devs) {
   #ifdef __APPLE__
     if (f.find("/dev/cu.usb") != string::npos) {
   #else
-    if (f.find("/dev/ttyUSB") != string::npos) {
+    if (f.find("/dev/ttyUSB") != string::npos || f.find("/dev/ttyAC") != string::npos) {
   #endif
       devs->push_back(f);
     }
