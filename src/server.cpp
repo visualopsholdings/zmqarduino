@@ -16,7 +16,6 @@
 
 #include <iostream>
 #include <chrono>
-#include <boost/algorithm/string.hpp>
 #include "boost/filesystem/operations.hpp"
 #include "boost/filesystem/path.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -36,15 +35,11 @@ namespace fs = boost::filesystem;
 using namespace boost::posix_time;
 
 Server::~Server() {
-  close();
-}
-
-void Server::close() {
-  if (_serial) {
-    _serial->close();
-    delete _serial;
-    _serial = 0;
+  for (auto i : _connections) {
+    i->close();
+    delete i;
   }
+  _connections.clear();
 }
 
 void Server::sendjson(const json &m) {
@@ -56,61 +51,73 @@ void Server::sendjson(const json &m) {
 
 }
 
-void Server::connectserial(const string &path, int baud) {
+void Server::connect(const string &path, int baud) {
 
   cout << "connecting to " << path << endl;
 
-  close();
-  
+  BufferedAsyncSerial *serial = 0;
   try {
-    _serial = new BufferedAsyncSerial(path, baud);
+    serial = new BufferedAsyncSerial(path, baud);
   }
   catch (boost::system::system_error& e) {
     cout << "open error: " << e.what() << endl;
+    return;
   }
   
-  if (!_serial || !_serial->isOpen() || _serial->errorStatus()) {
+  if (!serial || !serial->isOpen() || serial->errorStatus()) {
+    if (serial) {
+      delete serial;
+    }
     json msg;
     msg["error"] = "couldn't open port";
     sendjson(msg);
     return;
   }
   
+  // store it.
+  _connections.push_back(new Connection(path, serial));
+  
   // this is a terrible hack but for some reason the first send doesn't TAKE
   // so we need to wait a bit and send it again.
   // works just fine after that.
   this_thread::sleep_for(chrono::milliseconds(500));
-  _serial->writeString("ID\n");
+  serial->writeString("ID\n");
   this_thread::sleep_for(chrono::milliseconds(100));
-  _serial->clear();
+  serial->clear();
   this_thread::sleep_for(chrono::milliseconds(100));
-  _serial->writeString("ID\n");
-  _waitingid = true;
+  serial->writeString("ID\n");
   
+}
+
+Connection *Server::find(const std::string &name) {
+  for (auto i : _connections) {
+    if (i->matchid(name)) {
+      return i;
+    }
+  }
+  return 0;
 }
 
 void Server::sendserial(const string &name, const string &data) {
 
   cout << "sending to " << name << endl;
 
-  if (_id) {
-    if (*_id != name) {
-      cout << "cant send to " << name << endl;
-      json msg;
-      msg["error"] = "don't know " + name;
-      sendjson(msg);
-      return;
-    }
+  Connection *conn = find(name);
+  if (!conn) {
+    cout << "cant send to " << name << endl;
+    json msg;
+    msg["error"] = "don't know " + name;
+    sendjson(msg);
+    return;
   }
-  if (!_serial || !_serial->isOpen() || _serial->errorStatus()) {
+  if (!conn->isgood()) {
     cout << "error while sending" << endl;
     json msg;
     msg["error"] = "couldnt send";
     sendjson(msg);
     return;
   }
-  
-  _serial->writeString(data + "\n");
+  conn->write(data);
   
   json msg;
   msg["sent"] = name;
@@ -168,45 +175,27 @@ void Server::getdevs(vector<string> *devs) {
 
 void Server::opendevs(const vector<string> &devs) {
 
-  if (devs.size() > 1) {
-    std::cout << "can only handle 1 new device" << endl;
-  }
-  else if (devs.size() > 0) {
-    connectserial(devs[0], BAUD_RATE);
+  for (auto i : devs) {
+    connect(i, BAUD_RATE);
   }
 
 }
 
-void Server::doread() {
-
-  if (_serial) {
-    stringstream s;
-    s << _serial->readStringUntil("\n");
-    string st = s.str();
-    if (st.length() > 0) {
-      cout << "got " << st << endl;
-      if (_waitingid) {
-        _waitingid = false;
-        boost::trim(st);
-        _id = st;
-        json msg;
-        msg["added"] = *_id;
-        sendjson(msg);
-      }
-      else if (_id) {
-        json msg;
-        json data;
-        data["name"] = *_id;
-        boost::trim(st);
-        data["data"] = st;
-        msg["received"] = data;
-        sendjson(msg);
-        cout << s.str();
-        cout.flush();
-      }
+void Server::remove(const string &path) {
+  for (vector<Connection *>::iterator i=_connections.begin(); i != _connections.end(); i++) {
+    if ((*i)->matchpath(path)) {
+      cout << "removed ";
+      (*i)->describe(cout);
+      cout << endl;
+      json msg;
+      msg["removed"] = path;
+      sendjson(msg);
+      (*i)->destroy();
+      delete *i;
+      _connections.erase(i);
+      return;
     }
   }
-  
 }
 
 void Server::handladdremove() {
@@ -223,21 +212,8 @@ void Server::handladdremove() {
   set_difference(_curdevs.begin(), _curdevs.end(), devs.begin(), devs.end(),
     std::inserter(removed, removed.begin()));
     
-  if (removed.size() > 1) {
-    std::cout << "can only handle 1 new device" << endl;
-  }
-  else if (removed.size() > 0) {
-    if (_id) {
-      json msg;
-      msg["removed"] = *_id;
-      sendjson(msg);
-      _id = boost::none;
-    }
-    if (_serial) {
-      // no point closing, it's gone :-(
-      delete _serial;
-      _serial = 0;
-    }
+  for (auto i: removed) {
+    remove(i);
   }
   
   _curdevs = devs;
@@ -265,12 +241,8 @@ void Server::run() {
         if (connected) {
           string name = **connected;
           cout << name << " connected" << endl;
-          if (_id) {
-            json msg;
-            msg["added"] = *_id;
-            sendjson(msg);
-          }
-          else {
+          for (auto i: _connections) {
+            i->added(this);
           }
           continue;
         }
@@ -293,7 +265,9 @@ void Server::run() {
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(SLEEP_TIME));
 
-    doread();
+    for (auto i : _connections) {
+      i->doread(this);
+    }
 
     // every so often, check the device tree.
     ptime cur = second_clock::local_time();

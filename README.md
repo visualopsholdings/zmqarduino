@@ -210,3 +210,6 @@ https://isocpp.org/
 
 ### 21 Jun 2023
 - Added "received".
+
+### 26 Jun 2023
+- Added support for multiple arduinos.

@@ -16,33 +16,31 @@
 #ifndef H_server
 #define H_server
 
+#include "connection.hpp"
+
 #include <nlohmann/json.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/optional.hpp>
 #include <zmq.hpp>
 
-class BufferedAsyncSerial;
-
 class Server {
 
 public:
-  Server(zmq::socket_t *pull, zmq::socket_t *push) : _pull(pull), _push(push), _serial(0), _waitingid(false) {}
+  Server(zmq::socket_t *pull, zmq::socket_t *push) : _pull(pull), _push(push) {}
   ~Server();
   
   void run();
+  void sendjson(const nlohmann::json &m);
   
 private:
   zmq::socket_t *_pull;
   zmq::socket_t *_push;
-  BufferedAsyncSerial *_serial;
+  std::vector<Connection *> _connections;
   std::vector<std::string> _curdevs;
-  bool _waitingid;
-  boost::optional<std::string> _id;
   
-  void close();
-  void connectserial(const std::string &path, int baud);
+  void connect(const std::string &path, int baud);
   void sendserial(const std::string &name, const std::string &data);
-  void sendjson(const nlohmann::json &m);
+  Connection *find(const std::string &name);
   
   boost::optional<std::string> getstring(const nlohmann::json::iterator &json, const std::string &name);
   boost::optional<int> getint(const nlohmann::json::iterator &json, const std::string &name);
@@ -50,7 +48,8 @@ private:
   void getdevs(std::vector<std::string> *devs);
   void opendevs(const std::vector<std::string> &devs);
   void handladdremove();
-  void doread();
+  void remove(const std::string &path);
+  bool anyneedsid();
   
 };
 

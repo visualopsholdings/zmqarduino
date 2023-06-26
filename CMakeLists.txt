@@ -35,5 +35,5 @@ set(BOOSTLIBS ${Boost_CHRONO_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_PROGRAM_OP
 
 include_directories(include)
 
-add_executable(ZMQArduino src/zmqarduino.cpp src/server.cpp src/AsyncSerial.cpp src/BufferedAsyncSerial.cpp)
+add_executable(ZMQArduino src/zmqarduino.cpp src/server.cpp src/connection.cpp src/AsyncSerial.cpp src/BufferedAsyncSerial.cpp)
   target_link_libraries(ZMQArduino zmq ${BOOSTLIBS})
