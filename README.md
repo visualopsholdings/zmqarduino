@@ -2,14 +2,14 @@
 
 A C++ service for using ZMQ to deal with arduinos.
 
-This exposes an Arduino to a service that only has to PUSH and PULL using ZeroMQ. The eventual
-idea is to use this service running on a raspberry PI (or any *nix*, even the Mac) and then use
+This exposes an Arduino to a service that only has to PUSH and PULL using ZeroMQ. The idea 
+is to use this service running on a raspberry PI (or any *nix*, even the Mac) and then use
 it to send or receive any data from an arduino.
 
 ZMQ is used is so that services can easily asynchronously receive
 data coming from an Arduino which is difficult to code in Python, or JavaScript etc.
 
-This service would be running as a daemon on a computer and then another process could connect
+This service runs as a daemon on a computer and then another process connects
 to it (even remotely) and find out the arduinos that are connected by name (in the sketch).
 
 When an arduino is connected or disconnected it will get a message, so it can deal with that.
@@ -25,13 +25,17 @@ That's the end goal. It's only VERY early days.
 
 ### Detecting an arduino added to the /dev tree.
 
-Extremely rudimentary, only works for Mac OS X and doesn't really probe the Arduino at all.
+This just scans the /dev tree at the moment but works quite well. It scans the tree about once per second
+for various things that might be arduinos. Works on Mac OS X and The PI.
 
 The arduino needs to respond to the command "ID\n" over serial with a name which identifies it.
 
-### Sending data to an Arduino
+The "tinylogo" project has a very easy way to do this if you want to use it for your sketches. check
+that out.
 
-Correctly implements a serial connection to an Arduino on Mac OS X.
+### Sending and receving data to/from an Arduino
+
+Correctly implements a serial connection to an Arduino on Mac OS X and the PI.
 
 ## Usage
 
@@ -183,7 +187,7 @@ $ cmake -DCMAKE_OSX_ARCHITECTURES="arm64" ..
 
 ## Current development focus
 
-### Getting it to work on a Raspberry PI.
+### Remote detection of ESP32's connected through Wifi (they work over serial).
 
 ## Credits
 
