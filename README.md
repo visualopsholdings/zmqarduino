@@ -62,37 +62,68 @@ commands and receive things from the service.
 
 The service will send back any "added" arduinos.
 
-#### Send data to an arduino
+#### Send data to an arduino using the ID.
 
 ```
 { 
   send: { 
-    name: "arduino", 
+    id: "arduino", 
     data: "FLASH" 
   } 
 }
 ```
 
-Send "FLASH" to the arduino called "arduino"
+Send "FLASH" to the arduino with ID "arduino"
+
+#### Send data to an arduino using the device.
+
+```
+{ 
+  send: { 
+    device: "/dev/cu.usbserial-1110", 
+    data: "FLASH" 
+  } 
+}
+```
+
+Send "FLASH" to the device
+
+#### Send data to the first device connected.
+
+```
+{ 
+  send: { 
+    data: "FLASH" 
+  } 
+}
+```
+
+Send "FLASH" to the device
 
 ### recieved
 
-#### New arduino added
+#### New device added
 
 ```
-{ added: "arduino" }
+{ device: "/dev/cu.usbserial-1110" }
+```
+
+An device with path "/dev/cu.usbserial-1110" was added to the machine.
+
+#### Device has an ID
+
+```
+{ id: { "device": "/dev/cu.usbserial-1110", "name": "arduino" } }
+```
+
+The device has an ID.
+
+#### Device removed
+
+```
+{ removed: "/dev/cu.usbserial-1110" }
 ```
   
-An arduino called "arduino" was added to the machine.
-
-#### Arduino removed
-
-```
-{ removed: "arduino" }
-```
-  
-An arduino called "arduino" was removed from the machine.
-
 #### error
 
 ```
@@ -104,7 +135,7 @@ A "foo" error happened.
 #### Data sent
 
 ```
-{ sent: "arduino" }
+{ sent: "/dev/cu.usbserial-1110" }
 ```
   
 Data was sent to the Arduino "arduino" 
@@ -114,7 +145,7 @@ Data was sent to the Arduino "arduino"
 ```
 { 
   received: { 
-    name: "arduino", 
+    device: "/dev/cu.usbserial-1110", 
     data: "FLASH" 
   } 
 }
@@ -179,12 +210,6 @@ Then to run the command:
 $ ./ZMQArduino
 ```
 
-For an M1 or M2 mac, use this command for cmake for everything.
-
-```
-$ cmake -DCMAKE_OSX_ARCHITECTURES="arm64" ..
-```
-
 ## Current development focus
 
 ### Remote detection of ESP32's connected through Wifi (they work over serial).
@@ -217,3 +242,8 @@ https://isocpp.org/
 
 ### 26 Jun 2023
 - Added support for multiple arduinos.
+
+### 29 Jul 2023
+- Allow comminication with devices that don't have IDs and use the device paths rather Thank
+  name
+

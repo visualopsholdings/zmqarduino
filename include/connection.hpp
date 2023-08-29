@@ -37,9 +37,10 @@ public:
   void added(Server *server);
   void describe(std::ostream &str);
   
+  std::string _path;
+
 private:
  
-  std::string _path;
   BufferedAsyncSerial *_serial;
   boost::optional<std::string> _id;
   bool _waitingid;

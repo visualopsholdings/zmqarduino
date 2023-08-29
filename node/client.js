@@ -31,18 +31,30 @@ pullSocket.on('message', (msg) => {
   if (json.sent) {
     console.log("sent");
   }
-  if (json.received) {
+  else if (json.received) {
     console.log("received", json.received);
   }
-  else if (json.added) {
-    console.log("added", json.added);
-    pushSocket.send(JSON.stringify({ send: { name: json.added, data: "RUN" } }));
+  else if (json.device) {
+    console.log("device", json.device);
+    // when a device is connected, send to that device
+    pushSocket.send(JSON.stringify({ send: { device: json.device, data: "FLASH" } }));
+    // just send to the first device connected
+//    pushSocket.send(JSON.stringify({ send: { "data": "FLASH" } }));
+  }
+  else if (json.id) {
+    console.log("id", json.id);
+    // for devices that have an ID, need to wait before sending anything at the start UNTIL
+    // we get the ID back.
+//    pushSocket.send(JSON.stringify({ send: { "data": "FLASH" } }));
   }
   else if (json.removed) {
     console.log("removed", json.removed);
   }
   else if (json.error) {
     console.log("error", json.error);
+  }
+  else {
+    console.log("not handled", json);
   }
 });
 pushSocket.send(JSON.stringify({ connected: "me" }));

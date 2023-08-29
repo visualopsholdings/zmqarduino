@@ -39,8 +39,9 @@ private:
   std::vector<std::string> _curdevs;
   
   void connect(const std::string &path, int baud);
-  void sendserial(const std::string &name, const std::string &data);
+  void sendserial(Connection *conn, const std::string &data);
   Connection *find(const std::string &name);
+  Connection *finddevice(const std::string &device);
   
   boost::optional<std::string> getstring(const nlohmann::json::iterator &json, const std::string &name);
   boost::optional<int> getint(const nlohmann::json::iterator &json, const std::string &name);

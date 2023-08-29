@@ -34,11 +34,20 @@ void Connection::describe(ostream &str) {
 }
 
 void Connection::added(Server *server) {
+
+  json msg1;
+  msg1["device"] = _path;
+  server->sendjson(msg1);
+  
   if (_id) {
-    json msg;
-    msg["added"] = *_id;
-    server->sendjson(msg);
+    json data;
+    data["device"] = _path;
+    data["name"] = *_id;
+    json msg2;
+    msg2["id"] = data;
+    server->sendjson(msg2);
   }
+
 }
 
 void Connection::doread(Server *server) {
@@ -52,26 +61,26 @@ void Connection::doread(Server *server) {
         _waitingid = false;
         boost::trim(st);
         _id = st;
+        json data;
+        data["device"] = _path;
+        data["name"] = *_id;
         json msg;
-        msg["added"] = *_id;
+        msg["id"] = data;
         server->sendjson(msg);
         cout << "added ";
         describe(cout);
         cout << endl;
       }
-      else if (_id) {
-        json msg;
+      else {
         json data;
-        data["name"] = *_id;
+        data["device"] = _path;
         boost::trim(st);
         data["data"] = st;
+        json msg;
         msg["received"] = data;
         server->sendjson(msg);
         cout << s.str();
         cout.flush();
-      }
-      else {
-        cout << "got " << st << " while no id and not waiting" << endl;
       }
     }
   }

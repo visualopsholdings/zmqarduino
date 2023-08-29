@@ -74,6 +74,12 @@ void Server::connect(const string &path, int baud) {
     return;
   }
   
+  {
+    json msg;
+    msg["device"] = path;
+    sendjson(msg);
+  }
+  
   // store it.
   _connections.push_back(new Connection(path, serial));
   
@@ -98,18 +104,19 @@ Connection *Server::find(const std::string &name) {
   return 0;
 }
 
-void Server::sendserial(const string &name, const string &data) {
-
-  cout << "sending to " << name << endl;
-
-  Connection *conn = find(name);
-  if (!conn) {
-    cout << "cant send to " << name << endl;
-    json msg;
-    msg["error"] = "don't know " + name;
-    sendjson(msg);
-    return;
+Connection *Server::finddevice(const std::string &device) {
+  for (auto i : _connections) {
+    if (i->matchpath(device)) {
+      return i;
+    }
   }
+  return 0;
+}
+
+void Server::sendserial(Connection *conn, const std::string &data) {
+
+  cout << "sending to " << conn->_path << endl;
+
   if (!conn->isgood()) {
     cout << "error while sending" << endl;
     json msg;
@@ -117,10 +124,11 @@ void Server::sendserial(const string &name, const string &data) {
     sendjson(msg);
     return;
   }
+  
   conn->write(data);
   
   json msg;
-  msg["sent"] = name;
+  msg["sent"] = conn->_path;
   sendjson(msg);
   
 }
@@ -251,14 +259,40 @@ void Server::run() {
         // a client want's to send data.
         boost::optional<json::iterator> j = get(&doc, "send");
         if (j) {
-          boost::optional<string> name = getstring(*j, "name");
           boost::optional<string> data = getstring(*j, "data");
-          if (!name || !data) {
-            cout << "missing name or data" << endl;
+          if (!data) {
+            cout << "missing data" << endl;
             continue;
           }
-          sendserial(*name, *data);
-          continue;
+          boost::optional<string> id = getstring(*j, "id");
+          Connection *conn = 0;
+          if (id) {
+            conn = find(*id);
+          }
+          else {
+            boost::optional<string> device = getstring(*j, "device");
+            if (device) {
+              conn = finddevice(*device);
+            }
+            else {
+              if (_connections.size() > 0) {
+                conn = _connections[0];
+              }
+              else {
+                json msg;
+                msg["error"] = "no id or device or no devices connected";
+                sendjson(msg);
+                continue;
+              }
+            }
+          }
+          if (!conn) {
+            json msg;
+            msg["error"] = "not connected ";
+            sendjson(msg);
+            continue;
+          }          
+          sendserial(conn, *data);
         }
       }
     }

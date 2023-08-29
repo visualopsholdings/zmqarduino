@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BuildNumber</key>
-	<string>41800078</string>
+	<string>41800086</string>
 	<key>BundleIdentifier</key>
 	<string>com.barebones.bbedit</string>
 	<key>HostIdentifier</key>
@@ -11,20 +11,20 @@
 	<key>HostName</key>
 	<string>paul-m1</string>
 	<key>LockDate</key>
-	<date>2023-06-28T06:33:15Z</date>
+	<date>2023-08-28T08:08:13Z</date>
 	<key>LockID</key>
-	<string>CD1CDC83-8F11-4BED-9A66-227B2195BFD1</string>
+	<string>CB65CB5C-ECC0-4126-A8C8-66E6365846CF</string>
 	<key>MarketingVersion</key>
-	<string>14.6.6</string>
+	<string>14.6.7</string>
 	<key>NetworkVolume</key>
 	<false/>
 	<key>ProcessIdentifier</key>
-	<integer>1737</integer>
+	<integer>1709</integer>
 	<key>UserName</key>
 	<string>paul</string>
 	<key>Version</key>
 	<integer>3</integer>
 	<key>VolumeIdentifier</key>
-	<string>6689EC54-7699-4B80-8952-95AEFB29E5EC</string>
+	<string>CEE3CC51-303D-4E8D-95D0-1DD1060BF1B6</string>
 </dict>
 </plist>
