@@ -161,6 +161,7 @@ libraries and a C++ compiler.
 So on your Linux (or mac using Homebrew etc), get all you need:
 
 ```
+$ sudo apt-get update
 $ sudo apt-get -y install g++ gcc make cmake libboost-all-dev
 ```
 
@@ -208,6 +209,22 @@ Then to run the command:
 
 ```
 $ ./ZMQArduino
+```
+
+On an Ubuntu, and perhaps on other Linux, you need to add your user to the dialout
+group.
+
+```
+$ sudo usermod -a -G dialout ubuntu
+```
+
+If you know the device name, you can find out the group you need to be in with
+
+```
+$ stat /dev/ttyUSB0
+...
+Access: (0660/crw-rw----)  Uid: (    0/    root)   Gid: (   20/ dialout)
+...
 ```
 
 ## Current development focus
