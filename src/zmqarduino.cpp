@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
           options(desc).positional(p).run(), vm);
   po::notify(vm);   
 
+  cout << "ZMQArduino 1.0, 1-Sep-2023." << endl;
+
   zmq::context_t context (1);
   zmq::socket_t pull(context, ZMQ_PULL);
   pull.bind("tcp://127.0.0.1:" + to_string(pullPort));
