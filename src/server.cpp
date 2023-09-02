@@ -20,12 +20,6 @@
 #include "boost/filesystem/path.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-// how often we check the device tree in seconds.
-#define DEVICE_CHECK_CADENCE  2
-
-// this is hard coded, we need to work out how we might probe for this.
-#define BAUD_RATE             9600
-
 // so we don't hammer the CPU, we sleep a little while each loop.
 #define SLEEP_TIME            20
 
@@ -184,7 +178,7 @@ void Server::getdevs(vector<string> *devs) {
 void Server::opendevs(const vector<string> &devs) {
 
   for (auto i : devs) {
-    connect(i, BAUD_RATE);
+    connect(i, _baudrate);
   }
 
 }
@@ -304,9 +298,9 @@ void Server::run() {
     }
 
     // every so often, check the device tree.
-    ptime cur = second_clock::local_time();
+    ptime cur = microsec_clock::local_time();
     time_duration diff = cur - start;
-    if (diff.total_seconds() > DEVICE_CHECK_CADENCE) {
+    if (diff.total_milliseconds() > _cadence) {
       handladdremove();
       start = cur;
     }

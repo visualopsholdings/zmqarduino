@@ -27,11 +27,15 @@ int main(int argc, char *argv[]) {
 
   int pushPort;
   int pullPort;
+  int cadence;
+  int baudrate;
 
   po::options_description desc("Allowed options");
   desc.add_options()
     ("pullPort", po::value<int>(&pullPort)->default_value(5558), "ZMQ Pull port.")
     ("pushPort", po::value<int>(&pushPort)->default_value(5559), "ZMQ Push port.")
+    ("cadence", po::value<int>(&cadence)->default_value(200), "Device check cadence in milliseconds.")
+    ("baudrate", po::value<int>(&baudrate)->default_value(9600), "Baud rate.")
     ("help", "produce help message")
     ;
   po::positional_options_description p;
@@ -41,8 +45,13 @@ int main(int argc, char *argv[]) {
           options(desc).positional(p).run(), vm);
   po::notify(vm);   
 
-  cout << "ZMQArduino 1.0, 1-Sep-2023." << endl;
+  cout << "ZMQArduino 1.1, 2-Sep-2023." << endl;
 
+  if (vm.count("help")) {
+    cout << desc << endl;
+    return 1;
+  }
+ 
   zmq::context_t context (1);
   zmq::socket_t pull(context, ZMQ_PULL);
   pull.bind("tcp://127.0.0.1:" + to_string(pullPort));
@@ -52,7 +61,7 @@ int main(int argc, char *argv[]) {
   push.bind("tcp://127.0.0.1:" + to_string(pushPort));
   cout << "Connect to ZMQ as PUSH on " << pushPort << endl;
   
-  Server server(&pull, &push);
+  Server server(&pull, &push, cadence, baudrate);
   server.run();
 
 }

@@ -261,6 +261,10 @@ https://isocpp.org/
 - Added support for multiple arduinos.
 
 ### 29 Jul 2023
-- Allow comminication with devices that don't have IDs and use the device paths rather Thank
+- Allow communication with devices that don't have IDs and use the device paths rather Thank
   name
+
+### 2 Sep 2023
+- Add cadence and baud rate parameters.
+
 

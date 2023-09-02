@@ -26,7 +26,8 @@
 class Server {
 
 public:
-  Server(zmq::socket_t *pull, zmq::socket_t *push) : _pull(pull), _push(push) {}
+  Server(zmq::socket_t *pull, zmq::socket_t *push, int cadence, int baudrate) : 
+    _pull(pull), _push(push), _cadence(cadence), _baudrate(baudrate) {}
   ~Server();
   
   void run();
@@ -37,6 +38,8 @@ private:
   zmq::socket_t *_push;
   std::vector<Connection *> _connections;
   std::vector<std::string> _curdevs;
+  int _cadence;
+  int _baudrate;
   
   void connect(const std::string &path, int baud);
   void sendserial(Connection *conn, const std::string &data);
