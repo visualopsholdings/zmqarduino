@@ -23,16 +23,21 @@
 #include <boost/optional.hpp>
 #include <zmq.hpp>
 
+class ZMQClient;
+
+typedef std::shared_ptr<ZMQClient> zmqClientPtr;
+
 class Server {
 
 public:
-  Server(zmq::socket_t *pull, zmq::socket_t *push, int cadence, int baudrate) : 
-    _pull(pull), _push(push), _cadence(cadence), _baudrate(baudrate) {}
+  Server(zmq::socket_t *pull, zmq::socket_t *push, int req, int cadence, int baudrate);
   ~Server();
   
-  void run();
+  void start();
   void sendjson(const nlohmann::json &m);
   
+  zmqClientPtr _zmq;
+
 private:
   zmq::socket_t *_pull;
   zmq::socket_t *_push;

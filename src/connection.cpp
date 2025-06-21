@@ -14,13 +14,14 @@
 #include "connection.hpp"
 
 #include "server.hpp"
+#include "zmqclient.hpp"
 #include "BufferedAsyncSerial.h"
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
-using json = nlohmann::json;
+using njson = nlohmann::json;
 
 void Connection::describe(ostream &str) {
   str << (_id ? *_id : "no id");
@@ -35,19 +36,25 @@ void Connection::describe(ostream &str) {
 
 void Connection::added(Server *server) {
 
-  json msg1;
-  msg1["device"] = _path;
-  server->sendjson(msg1);
+  njson msg;
+  msg["device"] = _path;
+  server->sendjson(msg);
   
   if (_id) {
-    json data;
-    data["device"] = _path;
-    data["name"] = *_id;
-    json msg2;
-    msg2["id"] = data;
-    server->sendjson(msg2);
+    sendid(server);
   }
 
+}
+
+void Connection::sendid(Server *server) {
+
+  njson data;
+  data["device"] = _path;
+  data["name"] = *_id;
+  njson msg;
+  msg["id"] = data;
+  server->sendjson(msg);
+  
 }
 
 void Connection::doread(Server *server) {
@@ -57,30 +64,29 @@ void Connection::doread(Server *server) {
     s << _serial->readStringUntil("\n");
     string st = s.str();
     if (st.length() > 0) {
+      boost::trim(st);
       if (_waitingid) {
         _waitingid = false;
-        boost::trim(st);
         _id = st;
-        json data;
-        data["device"] = _path;
-        data["name"] = *_id;
-        json msg;
-        msg["id"] = data;
-        server->sendjson(msg);
+        sendid(server);
         cout << "added ";
         describe(cout);
         cout << endl;
       }
       else {
-        json data;
-        data["device"] = _path;
-        boost::trim(st);
-        data["data"] = st;
-        json msg;
-        msg["received"] = data;
-        server->sendjson(msg);
-        cout << s.str();
-        cout.flush();
+        if (_stream.empty()) {
+          njson data;
+          data["device"] = _path;
+          data["data"] = st;
+          njson msg;
+          msg["received"] = data;
+          server->sendjson(msg);
+          cout << s.str() << endl;
+          cout.flush();
+        }
+        else {
+          server->_zmq->send(_user, _stream, _sequence, st);
+        }
       }
     }
   }
@@ -112,4 +118,3 @@ bool Connection::isgood() {
 void Connection::write(const string &data) {
   _serial->writeString(data + "\n");
 }
-

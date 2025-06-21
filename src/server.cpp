@@ -12,21 +12,29 @@
 */
 
 #include "server.hpp"
+
 #include "BufferedAsyncSerial.h"
+#include "zmqclient.hpp"
 
 #include <iostream>
 #include <chrono>
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
+#include <filesystem>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 // so we don't hammer the CPU, we sleep a little while each loop.
 #define SLEEP_TIME            20
 
 using namespace std;
-using json = nlohmann::json;
-namespace fs = boost::filesystem;
+using njson = nlohmann::json;
+namespace fs = std::filesystem;
 using namespace boost::posix_time;
+
+Server::Server(zmq::socket_t *pull, zmq::socket_t *push, int req, int cadence, int baudrate) : 
+    _pull(pull), _push(push), _cadence(cadence), _baudrate(baudrate) {
+
+	_zmq = zmqClientPtr(new ZMQClient(this, req));
+	
+}
 
 Server::~Server() {
   for (auto i : _connections) {
@@ -36,7 +44,7 @@ Server::~Server() {
   _connections.clear();
 }
 
-void Server::sendjson(const json &m) {
+void Server::sendjson(const njson &m) {
 
   string msg = m.dump();
   zmq::message_t zmsg(msg.length());
@@ -62,14 +70,14 @@ void Server::connect(const string &path, int baud) {
     if (serial) {
       delete serial;
     }
-    json msg;
+    njson msg;
     msg["error"] = "couldn't open port";
     sendjson(msg);
     return;
   }
   
   {
-    json msg;
+    njson msg;
     msg["device"] = path;
     sendjson(msg);
   }
@@ -113,7 +121,7 @@ void Server::sendserial(Connection *conn, const std::string &data) {
 
   if (!conn->isgood()) {
     cout << "error while sending" << endl;
-    json msg;
+    njson msg;
     msg["error"] = "couldnt send";
     sendjson(msg);
     return;
@@ -121,15 +129,15 @@ void Server::sendserial(Connection *conn, const std::string &data) {
   
   conn->write(data);
   
-  json msg;
+  njson msg;
   msg["sent"] = conn->_path;
   sendjson(msg);
   
 }
 
-boost::optional<string> Server::getstring(const json::iterator &json, const string &name) {
+boost::optional<string> Server::getstring(const njson::iterator &json, const string &name) {
 
-  json::iterator i = json->find(name);
+  njson::iterator i = json->find(name);
   if (i == json->end()) {
     return boost::none;
   }
@@ -138,9 +146,9 @@ boost::optional<string> Server::getstring(const json::iterator &json, const stri
   
 }
 
-boost::optional<int> Server::getint(const json::iterator &json, const string &name) {
+boost::optional<int> Server::getint(const njson::iterator &json, const string &name) {
 
-  json::iterator i = json->find(name);
+  njson::iterator i = json->find(name);
   if (i == json->end()) {
     return boost::none;
   }
@@ -148,9 +156,9 @@ boost::optional<int> Server::getint(const json::iterator &json, const string &na
   
 }
 
-boost::optional<json::iterator> Server::get(json *json, const string &name) {
+boost::optional<njson::iterator> Server::get(njson *json, const string &name) {
 
-  json::iterator i = json->find(name);
+  njson::iterator i = json->find(name);
   if (i == json->end()) {
     return boost::none;
   }
@@ -189,7 +197,7 @@ void Server::remove(const string &path) {
       cout << "removed ";
       (*i)->describe(cout);
       cout << endl;
-      json msg;
+      njson msg;
       msg["removed"] = path;
       sendjson(msg);
       (*i)->destroy();
@@ -222,8 +230,10 @@ void Server::handladdremove() {
   
 }
 
-void Server::run() {
+void Server::start() {
   
+  _zmq->run();
+
   getdevs(&_curdevs);
   opendevs(_curdevs);
   
@@ -236,10 +246,10 @@ void Server::run() {
     zmq::message_t reply;
     if (_pull->recv(&reply, ZMQ_DONTWAIT)) {
       string s((const char *)reply.data(), reply.size());
-      json doc = json::parse(s);
+      njson doc = njson::parse(s);
       {
         // a client has connected.
-        boost::optional<json::iterator> connected = get(&doc, "connected");
+        boost::optional<njson::iterator> connected = get(&doc, "connected");
         if (connected) {
           string name = **connected;
           cout << name << " connected" << endl;
@@ -250,8 +260,42 @@ void Server::run() {
         }
       }
       {
+        // we know the stream to use
+        boost::optional<njson::iterator> stream = get(&doc, "stream");
+        if (stream) {
+          string str = **stream;
+          cout << "stream " << str << endl;
+          boost::optional<njson::iterator> user = get(&doc, "user");
+          if (!user) {
+            cout << "no user!" << endl;
+            continue;
+          }
+          string u = **user;
+          cout << "user " << u << endl;
+          boost::optional<njson::iterator> sequence = get(&doc, "sequence");
+          boost::optional<njson::iterator> device = get(&doc, "device");
+          if (!device) {
+            cout << "no device!" << endl;
+            continue;
+          }
+          string dev = **device;
+          cout << "device " << dev << endl;
+          Connection *conn = finddevice(dev);
+          if (!conn) {
+            cout << "device not found!" << endl;
+            continue;
+          }
+          conn->_stream = str;
+          conn->_user = u;
+          if (sequence) {
+            conn->_sequence = **sequence;
+          }
+          continue;
+        }
+      }
+      {
         // a client want's to send data.
-        boost::optional<json::iterator> j = get(&doc, "send");
+        boost::optional<njson::iterator> j = get(&doc, "send");
         if (j) {
           boost::optional<string> data = getstring(*j, "data");
           if (!data) {
@@ -273,7 +317,7 @@ void Server::run() {
                 conn = _connections[0];
               }
               else {
-                json msg;
+                njson msg;
                 msg["error"] = "no id or device or no devices connected";
                 sendjson(msg);
                 continue;
@@ -281,11 +325,12 @@ void Server::run() {
             }
           }
           if (!conn) {
-            json msg;
+            njson msg;
             msg["error"] = "not connected ";
             sendjson(msg);
             continue;
-          }          
+          }         
+          cout << "sending: " << *data << endl; 
           sendserial(conn, *data);
         }
       }

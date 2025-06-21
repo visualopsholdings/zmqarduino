@@ -35,9 +35,13 @@ public:
   void write(const std::string &data);
   void doread(Server *server);
   void added(Server *server);
+  void sendid(Server *server);
   void describe(std::ostream &str);
   
   std::string _path;
+  std::string _stream;
+  std::string _user;
+  std::string _sequence;
 
 private:
  
