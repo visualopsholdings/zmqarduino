@@ -86,12 +86,12 @@ int main(int argc, char *argv[]) {
  
   zmq::context_t context (1);
   zmq::socket_t pull(context, ZMQ_PULL);
-  pull.bind("tcp://127.0.0.1:" + to_string(pullPort));
-  cout << "Bind to ZMQ as PULL on " << pullPort << endl;
+  pull.connect("tcp://127.0.0.1:" + to_string(pullPort));
+  BOOST_LOG_TRIVIAL(info) << "Connect to ZMQ as PULL on " << pullPort;
 
   zmq::socket_t push(context, ZMQ_PUSH);
-  push.bind("tcp://127.0.0.1:" + to_string(pushPort));
-  cout << "Bind to ZMQ as PUSH on " << pushPort << endl;
+  push.connect("tcp://127.0.0.1:" + to_string(pushPort));
+  BOOST_LOG_TRIVIAL(info) << "Connect to ZMQ as PUSH on " << pushPort;
   
   Server server(&pull, &push, reqPort, cadence, baudrate);
   server.start();

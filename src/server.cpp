@@ -20,6 +20,7 @@
 #include <chrono>
 #include <filesystem>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/log/trivial.hpp>
 
 // so we don't hammer the CPU, we sleep a little while each loop.
 #define SLEEP_TIME            20
@@ -46,6 +47,8 @@ Server::~Server() {
 
 void Server::sendjson(const njson &m) {
 
+  BOOST_LOG_TRIVIAL(trace) << "send " << m;
+
   string msg = m.dump();
   zmq::message_t zmsg(msg.length());
   memcpy(zmsg.data(), msg.c_str(), msg.length());
@@ -55,14 +58,14 @@ void Server::sendjson(const njson &m) {
 
 void Server::connect(const string &path, int baud) {
 
-  cout << "connecting to " << path << endl;
+  BOOST_LOG_TRIVIAL(info) << "connecting to " << path;
 
   BufferedAsyncSerial *serial = 0;
   try {
     serial = new BufferedAsyncSerial(path, baud);
   }
   catch (boost::system::system_error& e) {
-    cout << "open error: " << e.what() << endl;
+    BOOST_LOG_TRIVIAL(error) << "open error: " << e.what();
     return;
   }
   
@@ -117,10 +120,10 @@ Connection *Server::finddevice(const std::string &device) {
 
 void Server::sendserial(Connection *conn, const std::string &data) {
 
-  cout << "sending to " << conn->_path << endl;
+  BOOST_LOG_TRIVIAL(info) << "sending to " << conn->_path;
 
   if (!conn->isgood()) {
-    cout << "error while sending" << endl;
+    BOOST_LOG_TRIVIAL(error) << "error while sending";
     njson msg;
     msg["error"] = "couldnt send";
     sendjson(msg);
@@ -194,9 +197,10 @@ void Server::opendevs(const vector<string> &devs) {
 void Server::remove(const string &path) {
   for (vector<Connection *>::iterator i=_connections.begin(); i != _connections.end(); i++) {
     if ((*i)->matchpath(path)) {
-      cout << "removed ";
-      (*i)->describe(cout);
-      cout << endl;
+      BOOST_LOG_TRIVIAL(info) << "removed ";
+      stringstream ss;
+      (*i)->describe(ss);
+      BOOST_LOG_TRIVIAL(info) << ss.str();
       njson msg;
       msg["removed"] = path;
       sendjson(msg);
@@ -252,7 +256,7 @@ void Server::start() {
         boost::optional<njson::iterator> connected = get(&doc, "connected");
         if (connected) {
           string name = **connected;
-          cout << name << " connected" << endl;
+          BOOST_LOG_TRIVIAL(info) << name << " connected";
           for (auto i: _connections) {
             i->added(this);
           }
@@ -264,25 +268,25 @@ void Server::start() {
         boost::optional<njson::iterator> stream = get(&doc, "stream");
         if (stream) {
           string str = **stream;
-          cout << "stream " << str << endl;
+          BOOST_LOG_TRIVIAL(info) << "stream " << str;
           boost::optional<njson::iterator> user = get(&doc, "user");
           if (!user) {
-            cout << "no user!" << endl;
+            BOOST_LOG_TRIVIAL(error) << "no user!";
             continue;
           }
           string u = **user;
-          cout << "user " << u << endl;
+          BOOST_LOG_TRIVIAL(info) << "user " << u;
           boost::optional<njson::iterator> sequence = get(&doc, "sequence");
           boost::optional<njson::iterator> device = get(&doc, "device");
           if (!device) {
-            cout << "no device!" << endl;
+            BOOST_LOG_TRIVIAL(error) << "no device!";
             continue;
           }
           string dev = **device;
-          cout << "device " << dev << endl;
+          BOOST_LOG_TRIVIAL(info) << "device " << dev;
           Connection *conn = finddevice(dev);
           if (!conn) {
-            cout << "device not found!" << endl;
+            BOOST_LOG_TRIVIAL(error) << "device not found!";
             continue;
           }
           conn->_stream = str;
@@ -299,7 +303,7 @@ void Server::start() {
         if (j) {
           boost::optional<string> data = getstring(*j, "data");
           if (!data) {
-            cout << "missing data" << endl;
+            BOOST_LOG_TRIVIAL(error) << "missing data";
             continue;
           }
           boost::optional<string> id = getstring(*j, "id");
@@ -330,7 +334,7 @@ void Server::start() {
             sendjson(msg);
             continue;
           }         
-          cout << "sending: " << *data << endl; 
+          BOOST_LOG_TRIVIAL(info) << "sending: " << *data; 
           sendserial(conn, *data);
         }
       }

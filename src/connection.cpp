@@ -19,6 +19,7 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+#include <boost/log/trivial.hpp>
 
 using namespace std;
 using njson = nlohmann::json;
@@ -69,9 +70,10 @@ void Connection::doread(Server *server) {
         _waitingid = false;
         _id = st;
         sendid(server);
-        cout << "added ";
-        describe(cout);
-        cout << endl;
+        BOOST_LOG_TRIVIAL(info) << "added ";
+        stringstream ss;
+        describe(ss);
+        BOOST_LOG_TRIVIAL(info) << ss.str();
       }
       else {
         if (_stream.empty()) {
@@ -81,8 +83,7 @@ void Connection::doread(Server *server) {
           njson msg;
           msg["received"] = data;
           server->sendjson(msg);
-          cout << s.str() << endl;
-          cout.flush();
+          BOOST_LOG_TRIVIAL(info) << s.str();
         }
         else {
           server->_zmq->send(_user, _stream, _sequence, st);

@@ -8,13 +8,124 @@
 	<integer>1129</integer>
 	<key>ExpandedItems:paul</key>
 	<array>
-		<string>D5461CB3-B7F5-45B0-8D7B-868E2AD73959</string>
+		<string>12AEFE6C-DDE3-4EE7-90FD-865FD8865E6C</string>
 		<string>A6EE0DA5-7674-4AD5-B297-F859FCB688F6</string>
 	</array>
 	<key>FileFilterMode:paul</key>
 	<integer>0</integer>
 	<key>OpenDocuments:paul</key>
 	<array>
+		<dict>
+			<key>BookmarkData</key>
+			<data>
+			Ym9vazwDAAAAAAQQMAAAACwG1s0CXl2IxIg/DOhGe5xq3C+b4TLw
+			iArEFnKDoVBgLAIAAAQAAAADAwAAAAgAKAUAAAABAQAAVXNlcnMA
+			AAAEAAAAAQEAAHBhdWwDAAAAAQEAAERldgAKAAAAAQEAAHptcWFy
+			ZHVpbm8AAAMAAAABAQAAc3JjAAoAAAABAQAAc2VydmVyLmNwcAAA
+			GAAAAAEGAAAQAAAAIAAAACwAAAA4AAAATAAAAFgAAAAIAAAABAMA
+			ADlCAAAAAAAACAAAAAQDAAAYVQUAAAAAAAgAAAAEAwAA2gQlAAAA
+			AAAIAAAABAMAACPoPwAAAAAACAAAAAQDAABb6j8AAAAAAAgAAAAE
+			AwAAY+o/AAAAAAAYAAAAAQYAAIwAAACcAAAArAAAALwAAADMAAAA
+			3AAAAAgAAAAABAAAQcUfaYk6dagYAAAAAQIAAAEAAAAAAAAADwAA
+			AAAAAAAAAAAAAAAAAAgAAAAEAwAABAAAAAAAAAAEAAAAAwMAAPUB
+			AAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQI
+			AAAABAMAAACQgpbnAAAACAAAAAAEAABBxuOahQAAACQAAAABAQAA
+			OTE2RTIxMzgtQjk4NS00ODQwLThDRjgtM0JGMDIxQzA4NEJDGAAA
+			AAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8A
+			AAAAAAAAAQUAABoAAAABAQAATlNVUkxEb2N1bWVudElkZW50aWZp
+			ZXJLZXkAAAQAAAADAwAA6kEAANgAAAD+////AQAAAAAAAAARAAAA
+			BBAAAGwAAAAAAAAABRAAAOwAAAAAAAAAEBAAABwBAAAAAAAAQBAA
+			AAwBAAAAAAAAAiAAAOgBAAAAAAAABSAAAFgBAAAAAAAAECAAAGgB
+			AAAAAAAAESAAAJwBAAAAAAAAEiAAAHwBAAAAAAAAEyAAAIwBAAAA
+			AAAAICAAAMgBAAAAAAAAMCAAAPQBAAAAAAAAAcAAADwBAAAAAAAA
+			EcAAACAAAAAAAAAAEsAAAEwBAAAAAAAAENAAAAQAAAAAAAAA/AEA
+			gCACAAAAAAAA
+			</data>
+			<key>FileURL</key>
+			<string>file:///Users/paul/Dev/zmqarduino/src/server.cpp</string>
+			<key>HasSecurityScope</key>
+			<true/>
+			<key>RelativePath</key>
+			<string>./src/server.cpp</string>
+			<key>TypeID</key>
+			<string>_CFileLocator</string>
+			<key>Version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>BookmarkData</key>
+			<data>
+			Ym9va0ADAAAAAAQQMAAAAD9oJ+shXmb3Ndb7ri98I0qDkxv6fAIy
+			pSh8ir0yl2l+MAIAAAQAAAADAwAAAAgAKAUAAAABAQAAVXNlcnMA
+			AAAEAAAAAQEAAHBhdWwDAAAAAQEAAERldgAKAAAAAQEAAHptcWFy
+			ZHVpbm8AAAMAAAABAQAAc3JjAA0AAAABAQAAem1xY2xpZW50LmNw
+			cAAAABgAAAABBgAAEAAAACAAAAAsAAAAOAAAAEwAAABYAAAACAAA
+			AAQDAAA5QgAAAAAAAAgAAAAEAwAAGFUFAAAAAAAIAAAABAMAANoE
+			JQAAAAAACAAAAAQDAAAj6D8AAAAAAAgAAAAEAwAAW+o/AAAAAAAI
+			AAAABAMAAMp5KAQAAAAAGAAAAAEGAACQAAAAoAAAALAAAADAAAAA
+			0AAAAOAAAAAIAAAAAAQAAEHHAzk3NkQFGAAAAAECAAABAAAAAAAA
+			AA8AAAAAAAAAAAAAAAAAAAAIAAAABAMAAAQAAAAAAAAABAAAAAMD
+			AAD1AQAACAAAAAEJAABmaWxlOi8vLwwAAAABAQAATWFjaW50b3No
+			IEhECAAAAAQDAAAAkIKW5wAAAAgAAAAABAAAQcbjmoUAAAAkAAAA
+			AQEAADkxNkUyMTM4LUI5ODUtNDg0MC04Q0Y4LTNCRjAyMUMwODRC
+			QxgAAAABAgAAgQAAAAEAAADvEwAAAQAAAAAAAAAAAAAAAQAAAAEB
+			AAAvAAAAAAAAAAEFAAAaAAAAAQEAAE5TVVJMRG9jdW1lbnRJZGVu
+			dGlmaWVyS2V5AAAEAAAAAwMAAEwQBQDYAAAA/v///wEAAAAAAAAA
+			EQAAAAQQAABwAAAAAAAAAAUQAADwAAAAAAAAABAQAAAgAQAAAAAA
+			AEAQAAAQAQAAAAAAAAIgAADsAQAAAAAAAAUgAABcAQAAAAAAABAg
+			AABsAQAAAAAAABEgAACgAQAAAAAAABIgAACAAQAAAAAAABMgAACQ
+			AQAAAAAAACAgAADMAQAAAAAAADAgAAD4AQAAAAAAAAHAAABAAQAA
+			AAAAABHAAAAgAAAAAAAAABLAAABQAQAAAAAAABDQAAAEAAAAAAAA
+			AAACAIAkAgAAAAAAAA==
+			</data>
+			<key>FileURL</key>
+			<string>file:///Users/paul/Dev/zmqarduino/src/zmqclient.cpp</string>
+			<key>HasSecurityScope</key>
+			<true/>
+			<key>RelativePath</key>
+			<string>./src/zmqclient.cpp</string>
+			<key>TypeID</key>
+			<string>_CFileLocator</string>
+			<key>Version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>BookmarkData</key>
+			<data>
+			Ym9va0QDAAAAAAQQMAAAAPBY4fNz+StX4m+MMoUWnxl2mnbsTxof
+			9OoEh1D0ffz7NAIAAAQAAAADAwAAAAgAKAUAAAABAQAAVXNlcnMA
+			AAAEAAAAAQEAAHBhdWwDAAAAAQEAAERldgAKAAAAAQEAAHptcWFy
+			ZHVpbm8AAAcAAAABAQAAaW5jbHVkZQANAAAAAQEAAHptcWNsaWVu
+			dC5ocHAAAAAYAAAAAQYAABAAAAAgAAAALAAAADgAAABMAAAAXAAA
+			AAgAAAAEAwAAOUIAAAAAAAAIAAAABAMAABhVBQAAAAAACAAAAAQD
+			AADaBCUAAAAAAAgAAAAEAwAAI+g/AAAAAAAIAAAABAMAAKjpPwAA
+			AAAACAAAAAQDAADxeSgEAAAAABgAAAABBgAAlAAAAKQAAAC0AAAA
+			xAAAANQAAADkAAAACAAAAAAEAABBxwM5Q4yXcBgAAAABAgAAAQAA
+			AAAAAAAPAAAAAAAAAAAAAAAAAAAACAAAAAQDAAAEAAAAAAAAAAQA
+			AAADAwAA9QEAAAgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2lu
+			dG9zaCBIRAgAAAAEAwAAAJCClucAAAAIAAAAAAQAAEHG45qFAAAA
+			JAAAAAEBAAA5MTZFMjEzOC1COTg1LTQ4NDAtOENGOC0zQkYwMjFD
+			MDg0QkMYAAAAAQIAAIEAAAABAAAA7xMAAAEAAAAAAAAAAAAAAAEA
+			AAABAQAALwAAAAAAAAABBQAAGgAAAAEBAABOU1VSTERvY3VtZW50
+			SWRlbnRpZmllcktleQAABAAAAAMDAABNEAUA2AAAAP7///8BAAAA
+			AAAAABEAAAAEEAAAdAAAAAAAAAAFEAAA9AAAAAAAAAAQEAAAJAEA
+			AAAAAABAEAAAFAEAAAAAAAACIAAA8AEAAAAAAAAFIAAAYAEAAAAA
+			AAAQIAAAcAEAAAAAAAARIAAApAEAAAAAAAASIAAAhAEAAAAAAAAT
+			IAAAlAEAAAAAAAAgIAAA0AEAAAAAAAAwIAAA/AEAAAAAAAABwAAA
+			RAEAAAAAAAARwAAAIAAAAAAAAAASwAAAVAEAAAAAAAAQ0AAABAAA
+			AAAAAAAEAgCAKAIAAAAAAAA=
+			</data>
+			<key>FileURL</key>
+			<string>file:///Users/paul/Dev/zmqarduino/include/zmqclient.hpp</string>
+			<key>HasSecurityScope</key>
+			<true/>
+			<key>RelativePath</key>
+			<string>./include/zmqclient.hpp</string>
+			<key>TypeID</key>
+			<string>_CFileLocator</string>
+			<key>Version</key>
+			<integer>1</integer>
+		</dict>
 		<dict>
 			<key>BookmarkData</key>
 			<data>
@@ -422,7 +533,7 @@
 	<key>OpenDocumentsExpanded</key>
 	<true/>
 	<key>OpenDocumentsSplitterProportion</key>
-	<real>0.54890678941311855</real>
+	<real>0.55005753739930952</real>
 	<key>ProjectItemsExpanded</key>
 	<true/>
 	<key>ProjectViewVisible</key>
@@ -431,7 +542,7 @@
 	<array>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -473,7 +584,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -517,7 +628,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -561,7 +672,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -605,7 +716,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -647,7 +758,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -691,7 +802,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -735,7 +846,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -779,7 +890,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -823,7 +934,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -867,7 +978,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -910,7 +1021,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2025-06-20T04:54:42Z</date>
+			<date>2025-06-23T04:36:48Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
