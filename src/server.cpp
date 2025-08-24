@@ -52,7 +52,11 @@ void Server::sendjson(const njson &m) {
   string msg = m.dump();
   zmq::message_t zmsg(msg.length());
   memcpy(zmsg.data(), msg.c_str(), msg.length());
+#if CPPZMQ_VERSION == ZMQ_MAKE_VERSION(4, 3, 1)
   _push->send(zmsg, ZMQ_DONTWAIT);
+#else
+  _push->send(zmsg, zmq::send_flags::dontwait);
+#endif
 
 }
 
@@ -91,11 +95,11 @@ void Server::connect(const string &path, int baud) {
   // this is a terrible hack but for some reason the first send doesn't TAKE
   // so we need to wait a bit and send it again.
   // works just fine after that.
-  this_thread::sleep_for(chrono::milliseconds(500));
+  boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
   serial->writeString("ID\n");
-  this_thread::sleep_for(chrono::milliseconds(100));
+  boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
   serial->clear();
-  this_thread::sleep_for(chrono::milliseconds(100));
+  boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
   serial->writeString("ID\n");
   
 }
@@ -248,7 +252,11 @@ void Server::start() {
 //    cout << "." << endl;
       
     zmq::message_t reply;
+#if CPPZMQ_VERSION == ZMQ_MAKE_VERSION(4, 3, 1)
     if (_pull->recv(&reply, ZMQ_DONTWAIT)) {
+#else
+    if (_pull->recv(reply, zmq::recv_flags::dontwait)) {
+#endif
       string s((const char *)reply.data(), reply.size());
       njson doc = njson::parse(s);
       {
